@@ -71,9 +71,22 @@ for pick in picks:
     extras.append(extra)
 
 
-def get_row_color(pick):
-    """Return the row color for the given pick."""
+def get_row_fill_color(pick):
+    """Return the row fill color for the given pick."""
     return "#beebed" if pick.system == Pick.SYSTEM_MR3 else "#cfe2f3"
+
+
+def get_row_line_color(pick):
+    """Return the roe line color for the given pick."""
+    index = picks.index(pick)
+    if index == 0:
+        return "#bbbbbb"
+
+    previous_pick = picks[index - 1]
+    if pick.course != previous_pick.course:
+        return "#000000"
+
+    return "#bbbbbb"
 
 
 fig = go.Figure(data=[go.Table(
@@ -88,8 +101,8 @@ fig = go.Figure(data=[go.Table(
     cells=dict(
         values=[[pick.system for pick in picks], [pick.course for pick in picks], [pick.time for pick in picks], [pick.horse for pick in picks],
                 ["x2" if pick.is_double else "" for pick in picks]],
-        line_color="#bbbbbb",
-        fill_color=[[get_row_color(pick) for pick in picks]],
+        line_color=[[get_row_line_color(pick) for pick in picks]],
+        fill_color=[[get_row_fill_color(pick) for pick in picks]],
         align=["center", "left", "center", "left", "center"], font=dict(color="black", size=14),
         height=22
         ))
