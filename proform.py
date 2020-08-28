@@ -70,18 +70,27 @@ for pick in picks:
         extra += ", x2"
     extras.append(extra)
 
+
+def get_row_color(pick):
+    """Return the row color for the given pick."""
+    return "#beebed" if pick.system == Pick.SYSTEM_MR3 else "#cfe2f3"
+
+
 fig = go.Figure(data=[go.Table(
-    columnwidth=[40, 15, 50, 20],
-    columnorder=[1, 2, 3, 4],
+    columnwidth=[11, 40, 15, 50, 7],
+    columnorder=[1, 2, 3, 4, 5],
     header=dict(
-        values=['<b>Course</b>', '<b>Time</b>', f"<b>Horse ({len(picks)} total + {num_doubles} doubles)</b>", '<b>Extra</b>'],
-        line_color='#bbbbbb', fill_color='#cfe2f3',
-        align='center', font=dict(color='black', size=12)
+        values=["<b>Sys</b>", "<b>Course</b>", "<b>Time</b>",
+                f"<b>Horse ({len(picks)} total + {num_doubles} doubles)</b>", "<b>x</b>"],
+        line_color="#bbbbbb", fill_color="#cfe2f3",
+        align="center", font=dict(color="black", size=12)
     ),
     cells=dict(
-        values=[[pick.course for pick in picks], [pick.time for pick in picks], [pick.horse for pick in picks], extras],
-        line_color="#bbbbbb", fill_color="#cfe2f3",
-        align='left', font=dict(color='black', size=14),
+        values=[[pick.system for pick in picks], [pick.course for pick in picks], [pick.time for pick in picks], [pick.horse for pick in picks],
+                ["x2" if pick.is_double else "" for pick in picks]],
+        line_color="#bbbbbb",
+        fill_color=[[get_row_color(pick) for pick in picks]],
+        align=["center", "left", "center", "left", "center"], font=dict(color="black", size=14),
         height=22
         ))
 ])
