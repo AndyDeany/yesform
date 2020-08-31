@@ -11,7 +11,7 @@ class Pick:
     SYSTEM_MR3 = "MR3"
 
     def __init__(self, pick_list):
-        system = pick_list[0]
+        system = pick_list[1]
         if system == "JR-TN2":
             self.system = self.SYSTEM_TN2
         elif system == "JR-DTR":
@@ -21,10 +21,10 @@ class Pick:
         else:
             raise ValueError(f"Unknown system: {system}")
 
-        self.horse = pick_list[1]
-        self.course = pick_list[2]
-        self.time = pick_list[3]
-        self.date = pick_list[4]
+        self.horse = pick_list[2]
+        self.course = pick_list[3]
+        self.time = pick_list[4]
+        self.date = pick_list[5]
 
         self.is_double = False
 
@@ -55,6 +55,7 @@ def is_duplicate_of_mr3_pick(pick):
         if mr3_pick.horse == pick.horse:
             mr3_pick.is_double = True
             return True
+
 
 full_length = len(picks)
 picks = [pick for pick in picks if not is_duplicate_of_mr3_pick(pick)]
@@ -104,25 +105,6 @@ fig = go.Figure(data=[go.Table(
         line_color=[[get_row_line_color(pick) for pick in picks]],
         fill_color=[[get_row_fill_color(pick) for pick in picks]],
         align=["center", "left", "center", "left", "center"], font=dict(color="black", size=14),
-        height=22
-        ))
-])
-
-fig.update_layout(width=700)
-fig.show()
-
-fig = go.Figure(data=[go.Table(
-    columnwidth=[40, 15, 50, 20],
-    columnorder=[1, 2, 3, 4],
-    header=dict(
-        values=['<b>Course</b>', '<b>Time</b>', f"<b>Horse ({len(picks)} total + {num_doubles} doubles)</b>", '<b>Extra</b>'],
-        line_color='#bbbbbb', fill_color='#ffb3e8',
-        align='center', font=dict(color='black', size=12)
-    ),
-    cells=dict(
-        values=[[pick.course for pick in picks], [pick.time for pick in picks], [pick.horse for pick in picks], extras],
-        line_color="#bbbbbb", fill_color="#ffb3e8",
-        align='left', font=dict(color='black', size=14),
         height=22
         ))
 ])
