@@ -11,7 +11,7 @@ class Pick:
     SYSTEM_MR3 = "MR3"
 
     def __init__(self, pick_list):
-        system = pick_list[1]
+        system = pick_list[0]
         if system == "JR-TN2":
             self.system = self.SYSTEM_TN2
         elif system == "JR-DTR":
@@ -21,10 +21,10 @@ class Pick:
         else:
             raise ValueError(f"Unknown system: {system}")
 
-        self.horse = pick_list[2]
-        self.course = pick_list[3]
-        self.time = pick_list[4]
-        self.date = pick_list[5]
+        self.horse = pick_list[1]
+        self.course = pick_list[2]
+        self.time = pick_list[3]
+        self.date = pick_list[4]
 
         self.is_double = False
 
