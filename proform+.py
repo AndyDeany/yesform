@@ -11,18 +11,17 @@ class Pick:
     SYSTEM_MR3 = "MR3"
     SYSTEM_LT6R = "LT6R"
 
-    def __init__(self, first_line, pick_list):
+    def __init__(self, column_headers, pick_list):
 
         data_columns = {
-            "system": first_line.index("SYSTEMNAME"),
-            "horse": first_line.index("HNAME"),
-            "course": first_line.index("CNAME"),
-            "time": first_line.index("TIME"),
-            "date": first_line.index("RHDATETIME")
+            "system": column_headers.index("FUTURE_SYSTEM"),
+            "horse": column_headers.index("FUTURE_HORSE"),
+            "course": column_headers.index("FUTURE_VENUE"),
+            "time": column_headers.index("FUTURE_TIME"),
+            "date": column_headers.index("FUTURE_RACEDATE")
         }
 
         system = pick_list[data_columns["system"]]
-        print(system)
         if system == "JR-TN2":
             self.system = self.SYSTEM_TN2
         elif system == "JR-DTR":
