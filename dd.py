@@ -18,6 +18,9 @@ class Pick:
     def __repr__(self):
         return f"{self.date} - {self.course} - {self.time} - {self.horse}"
 
+    def __eq__(self, other):
+        return self.date == other.date and self.time == other.time and self.horse == other.horse and self.course == other.course
+
 
 picks = []
 
