@@ -94,7 +94,7 @@ def get_row_fill_color(pick):
 
 
 def get_row_line_color(pick):
-    """Return the roe line color for the given pick."""
+    """Return the row line color for the given pick."""
     index = picks.index(pick)
     if index == 0:
         return "#bbbbbb"
