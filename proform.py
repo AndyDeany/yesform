@@ -3,12 +3,15 @@ import plotly.graph_objects as go
 
 picks = []
 
+lt6r_picks = []
+
 
 class Pick:
 
     SYSTEM_TN2 = "TN2"
     SYSTEM_DTR = "DTR"
     SYSTEM_MR3 = "MR3"
+    SYSTEM_LT6R = "LT6R"
 
     def __init__(self, pick_list):
         system = pick_list[0]
@@ -18,6 +21,8 @@ class Pick:
             self.system = self.SYSTEM_DTR
         elif system == "JR-MR3.2":
             self.system = self.SYSTEM_MR3
+        elif system == "JR - LT6R":
+            self.system = self.SYSTEM_LT6R
         else:
             raise ValueError(f"Unknown system: {system}")
 
@@ -39,11 +44,14 @@ with open("ferret.csv") as input_csv:
         if first_line:
             first_line = False
             continue    # Skip first line - column headers, not a pick
-
-        picks.append(Pick(line))
+        if line[0] == "JR - LT6R":
+            lt6r_picks.append(Pick(line))
+        else:
+            picks.append(Pick(line))
 
 
 picks.sort(key=lambda p: (p.course, p.time))    # Sort picks by course then time
+lt6r_picks.sort(key=lambda p: (p.course, p.time))    # Sort picks by course then time
 
 
 def is_duplicate_of_mr3_pick(pick):
@@ -78,12 +86,24 @@ def get_row_fill_color(pick):
 
 
 def get_row_line_color(pick):
-    """Return the roe line color for the given pick."""
+    """Return the row line color for the given pick."""
     index = picks.index(pick)
     if index == 0:
         return "#bbbbbb"
 
     previous_pick = picks[index - 1]
+    if pick.course != previous_pick.course:
+        return "#000000"
+
+    return "#bbbbbb"
+
+def get_lt6r_row_line_color(pick):
+    """Return the row line color for the given lt6r pick."""
+    index = lt6r_picks.index(pick)
+    if index == 0:
+        return "#bbbbbb"
+
+    previous_pick = lt6r_picks[index - 1]
     if pick.course != previous_pick.course:
         return "#000000"
 
@@ -100,10 +120,34 @@ fig = go.Figure(data=[go.Table(
         align="center", font=dict(color="black", size=12)
     ),
     cells=dict(
-        values=[[pick.system for pick in picks], [pick.course for pick in picks], [pick.time for pick in picks], [pick.horse for pick in picks],
+        values=[[pick.system for pick in picks], [pick.course for pick in picks],
+                [pick.time for pick in picks], [pick.horse for pick in picks],
                 ["x2" if pick.is_double else "" for pick in picks]],
         line_color=[[get_row_line_color(pick) for pick in picks]],
         fill_color=[[get_row_fill_color(pick) for pick in picks]],
+        align=["center", "left", "center", "left", "center"], font=dict(color="black", size=14),
+        height=22
+        ))
+])
+
+fig.update_layout(width=700)
+fig.show()
+
+fig = go.Figure(data=[go.Table(
+    columnwidth=[11, 40, 15, 50, 7],
+    columnorder=[1, 2, 3, 4, 5],
+    header=dict(
+        values=["<b>Sys</b>", "<b>Course</b>", "<b>Time</b>",
+                f"<b>Horse ({len(lt6r_picks)} total)"],
+        line_color="#bbbbbb", fill_color="#cfe2f3",
+        align="center", font=dict(color="black", size=12)
+    ),
+    cells=dict(
+        values=[[pick.system for pick in lt6r_picks], [pick.course for pick in lt6r_picks],
+                [pick.time for pick in lt6r_picks], [pick.horse for pick in lt6r_picks],
+                ["x2" if pick.is_double else "" for pick in lt6r_picks]],
+        line_color=[[get_lt6r_row_line_color(pick) for pick in lt6r_picks]],
+        fill_color="#cfe2f3",
         align=["center", "left", "center", "left", "center"], font=dict(color="black", size=14),
         height=22
         ))
