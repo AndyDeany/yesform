@@ -33,10 +33,7 @@ def add_picks_from_csv(csv_filename):
             picks.append(Pick(line))
 
 
-add_picks_from_csv("TN2.csv")
-add_picks_from_csv("DTR.csv")
-add_picks_from_csv("MR3.csv")
-add_picks_from_csv("LT6R.csv")
+add_picks_from_csv("6lto.csv")
 
 
 picks.sort(key=lambda p: (p.date, p.time, p.horse))    # Sort picks by course then time
