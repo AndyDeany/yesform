@@ -53,7 +53,10 @@ with open("ferret.csv") as input_csv:
             first_line = line
             continue    # Skip first line - column headers, not a pick
 
-        picks.append(Pick(first_line, line))
+        try:
+            picks.append(Pick(first_line, line))
+        except ValueError:
+            continue  # Ignoring picks that aren't from our main EP systems.
 
 
 picks.sort(key=lambda p: (p.course, p.time))    # Sort picks by course then time
