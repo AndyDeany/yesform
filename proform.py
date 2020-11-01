@@ -2,8 +2,9 @@ import csv
 import plotly.graph_objects as go
 
 picks = []
-
 lt6r_picks = []
+jlt2_picks = []
+bsp_picks = []
 
 
 class Pick:
@@ -12,24 +13,42 @@ class Pick:
     SYSTEM_DTR = "DTR"
     SYSTEM_MR3 = "MR3"
     SYSTEM_LT6R = "LT6R"
+    SYSTEM_JLT2 = "JLT2"
+    SYSTEM_6LTO = "6LTO"
+    SYSTEM_ALLOUT = "ALLOUT"
+
+    @classmethod
+    def standardised_system(cls, system_name):
+        """Get the standardised name of the system with the given system_name."""
+        if system_name == "JR-TN2":
+            return cls.SYSTEM_TN2
+        elif system_name == "JR-DTR":
+            return cls.SYSTEM_DTR
+        elif system_name == "JR-MR3.2":
+            return cls.SYSTEM_MR3
+        elif system_name == "JR - LT6R":
+            return cls.SYSTEM_LT6R
+        elif system_name == "JR-JLT2":
+            return cls.SYSTEM_JLT2
+        elif system_name == "JR >=6 + jockey":
+            return cls.SYSTEM_6LTO
+        elif system_name == "JR-ALLOUT":
+            return cls.SYSTEM_ALLOUT
+        else:
+            raise ValueError(f"Unknown system: {system_name}")
 
     def __init__(self, pick_list):
-        system = pick_list[0]
-        if system == "JR-TN2":
-            self.system = self.SYSTEM_TN2
-        elif system == "JR-DTR":
-            self.system = self.SYSTEM_DTR
-        elif system == "JR-MR3.2":
-            self.system = self.SYSTEM_MR3
-        elif system == "JR - LT6R":
-            self.system = self.SYSTEM_LT6R
-        else:
-            raise ValueError(f"Unknown system: {system}")
+        offset = 0
+        if pick_list[0] == "Active":
+            offset = 1
 
-        self.horse = pick_list[1]
-        self.course = pick_list[2]
-        self.time = pick_list[3]
-        self.date = pick_list[4]
+        system = pick_list[0+offset]
+        self.system = self.standardised_system(system)
+
+        self.horse = pick_list[1+offset]
+        self.course = pick_list[2+offset]
+        self.time = pick_list[3+offset]
+        self.date = pick_list[4+offset]
 
         self.is_double = False
 
@@ -44,14 +63,23 @@ with open("ferret.csv") as input_csv:
         if first_line:
             first_line = False
             continue    # Skip first line - column headers, not a pick
-        if line[0] == "JR - LT6R":
-            lt6r_picks.append(Pick(line))
+
+        pick = Pick(line)
+        if pick.system == Pick.SYSTEM_LT6R:
+            lt6r_picks.append(pick)
+        elif pick.system == Pick.SYSTEM_JLT2:
+            jlt2_picks.append(pick)
+        elif pick.system in (Pick.SYSTEM_6LTO, Pick.SYSTEM_ALLOUT):
+            bsp_picks.append(pick)
         else:
-            picks.append(Pick(line))
+            picks.append(pick)
 
 
-picks.sort(key=lambda p: (p.course, p.time))    # Sort picks by course then time
-lt6r_picks.sort(key=lambda p: (p.course, p.time))    # Sort picks by course then time
+# Sort picks by course then time
+picks.sort(key=lambda p: (p.course, p.time))
+lt6r_picks.sort(key=lambda p: (p.course, p.time))
+jlt2_picks.sort(key=lambda p: (p.course, p.time))
+bsp_picks.sort(key=lambda p: (p.course, p.time))
 
 
 def is_duplicate_of_mr3_pick(pick):
@@ -85,6 +113,12 @@ def get_row_fill_color(pick):
     return "#beebed" if pick.system == Pick.SYSTEM_MR3 else "#cfe2f3"
 
 
+def get_bsp_row_fill_color(pick):
+    """Return the row fill color for the given pick."""
+    print(pick.system)
+    return "#cfe2f3" if pick.system == Pick.SYSTEM_6LTO else "#ffbfb8"
+
+
 def get_row_line_color(pick):
     """Return the row line color for the given pick."""
     index = picks.index(pick)
@@ -97,6 +131,7 @@ def get_row_line_color(pick):
 
     return "#bbbbbb"
 
+
 def get_lt6r_row_line_color(pick):
     """Return the row line color for the given lt6r pick."""
     index = lt6r_picks.index(pick)
@@ -104,6 +139,20 @@ def get_lt6r_row_line_color(pick):
         return "#bbbbbb"
 
     previous_pick = lt6r_picks[index - 1]
+    if pick.course != previous_pick.course:
+        return "#000000"
+
+    return "#bbbbbb"
+
+
+def get_bsp_row_line_color(pick):
+    """Return the row line color for the given lt6r pick."""
+    print(type(pick))
+    index = bsp_picks.index(pick)
+    if index == 0:
+        return "#bbbbbb"
+
+    previous_pick = bsp_picks[index - 1]
     if pick.course != previous_pick.course:
         return "#000000"
 
@@ -133,21 +182,44 @@ fig = go.Figure(data=[go.Table(
 fig.update_layout(width=700)
 fig.show()
 
+# fig = go.Figure(data=[go.Table(
+#     columnwidth=[11, 40, 15, 50, 7],
+#     columnorder=[1, 2, 3, 4, 5],
+#     header=dict(
+#         values=["<b>Sys</b>", "<b>Course</b>", "<b>Time</b>",
+#                 f"<b>Horse ({len(lt6r_picks)} total)"],
+#         line_color="#bbbbbb", fill_color="#cfe2f3",
+#         align="center", font=dict(color="black", size=12)
+#     ),
+#     cells=dict(
+#         values=[[pick.system for pick in lt6r_picks], [pick.course for pick in lt6r_picks],
+#                 [pick.time for pick in lt6r_picks], [pick.horse for pick in lt6r_picks],
+#                 ["x2" if pick.is_double else "" for pick in lt6r_picks]],
+#         line_color=[[get_lt6r_row_line_color(pick) for pick in lt6r_picks]],
+#         fill_color="#cfe2f3",
+#         align=["center", "left", "center", "left", "center"], font=dict(color="black", size=14),
+#         height=22
+#         ))
+# ])
+#
+# fig.update_layout(width=700)
+# fig.show()
+
 fig = go.Figure(data=[go.Table(
     columnwidth=[11, 40, 15, 50, 7],
     columnorder=[1, 2, 3, 4, 5],
     header=dict(
         values=["<b>Sys</b>", "<b>Course</b>", "<b>Time</b>",
-                f"<b>Horse ({len(lt6r_picks)} total)"],
+                f"<b>Horse ({len(bsp_picks)} total)"],
         line_color="#bbbbbb", fill_color="#cfe2f3",
         align="center", font=dict(color="black", size=12)
     ),
     cells=dict(
-        values=[[pick.system for pick in lt6r_picks], [pick.course for pick in lt6r_picks],
-                [pick.time for pick in lt6r_picks], [pick.horse for pick in lt6r_picks],
-                ["x2" if pick.is_double else "" for pick in lt6r_picks]],
-        line_color=[[get_lt6r_row_line_color(pick) for pick in lt6r_picks]],
-        fill_color="#cfe2f3",
+        values=[[pick.system for pick in bsp_picks], [pick.course for pick in bsp_picks],
+                [pick.time for pick in bsp_picks], [pick.horse for pick in bsp_picks],
+                ["x2" if pick.is_double else "" for pick in bsp_picks]],
+        line_color=[[get_bsp_row_line_color(pick) for pick in bsp_picks]],
+        fill_color=[[get_bsp_row_fill_color(pick) for pick in bsp_picks]],
         align=["center", "left", "center", "left", "center"], font=dict(color="black", size=14),
         height=22
         ))
