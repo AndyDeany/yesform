@@ -4,6 +4,8 @@ import plotly.graph_objects as go
 picks = []
 lt6r_picks = []
 jlt2_picks = []
+pnj_picks = []
+accas_picks = []
 bsp_picks = []
 
 
@@ -75,6 +77,10 @@ with open("ferret.csv") as input_csv:
             lt6r_picks.append(pick)
         elif pick.system == Pick.SYSTEM_JLT2:
             jlt2_picks.append(pick)
+        elif pick.system == Pick.SYSTEM_PnJ:
+            pnj_picks.append(pick)
+        elif pick.system == Pick.SYSTEM_ACCAS:
+            accas_picks.append(pick)
         elif pick.system in (Pick.SYSTEM_6LTO, Pick.SYSTEM_ALLOUT):
             bsp_picks.append(pick)
         else:
@@ -85,6 +91,8 @@ with open("ferret.csv") as input_csv:
 picks.sort(key=lambda p: (p.course, p.time))
 lt6r_picks.sort(key=lambda p: (p.course, p.time))
 jlt2_picks.sort(key=lambda p: (p.course, p.time))
+pnj_picks.sort(key=lambda p: (p.course, p.time))
+accas_picks.sort(key=lambda p: (p.course, p.time))
 bsp_picks.sort(key=lambda p: (p.course, p.time))
 
 
