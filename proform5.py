@@ -11,6 +11,8 @@ class Pick:
     SYSTEM_MR3 = "MR3"
     SYSTEM_LT6R = "LT6R"
     SYSTEM_JLT2 = "JLT2"
+    SYSTEM_PnJ = "PnJ"
+    SYSTEM_ACCAS = "ACCAS"
 
     def __init__(self, column_headers, pick_list):
 
@@ -34,6 +36,10 @@ class Pick:
             self.systems.add(self.SYSTEM_LT6R)
         elif system == "JR-JLT2":
             self.systems.add(self.SYSTEM_JLT2)
+        elif system == "jockey+pace":
+            self.systems.add(self.SYSTEM_PnJ)
+        elif system == "JR - ACCAS":
+            self.systems.add(self.SYSTEM_ACCAS)
         else:
             raise ValueError(f"Unknown system: {system}")
 
@@ -44,6 +50,10 @@ class Pick:
 
     @property
     def system(self):
+        if self.SYSTEM_JLT2 in self.systems:
+            return self.SYSTEM_JLT2
+        elif self.SYSTEM_MR3 in self.systems:
+            return self.SYSTEM_MR3
         return self.systems.copy().pop()
 
     @property
@@ -91,8 +101,13 @@ num_quadruples = len([pick for pick in picks if pick.quantity == 4])
 def get_row_fill_color(pick):
     """Return the row fill color for the given pick."""
     if {Pick.SYSTEM_MR3, Pick.SYSTEM_JLT2}.issubset(pick.systems):
-        return "abbabc"
-    return "#beebed" if pick.system in (Pick.SYSTEM_MR3, Pick.SYSTEM_JLT2) else "#cfe2f3"
+        return "#afc3fa"
+    elif Pick.SYSTEM_JLT2 in pick.systems:
+        return "#d5cff3"
+    elif Pick.SYSTEM_MR3 in pick.systems:
+        return "#adf4e7"
+    else:
+        return "#cfe2f3"
 
 
 def get_row_line_color(pick):
