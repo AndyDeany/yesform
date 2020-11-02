@@ -14,6 +14,8 @@ class Pick:
     SYSTEM_MR3 = "MR3"
     SYSTEM_LT6R = "LT6R"
     SYSTEM_JLT2 = "JLT2"
+    SYSTEM_ACCAS = "ACCAS"
+    SYSTEM_PnJ = "PnJ"
     SYSTEM_6LTO = "6LTO"
     SYSTEM_ALLOUT = "ALLOUT"
 
@@ -30,6 +32,10 @@ class Pick:
             return cls.SYSTEM_LT6R
         elif system_name == "JR-JLT2":
             return cls.SYSTEM_JLT2
+        elif system_name == "jockey+pace":
+            return cls.SYSTEM_PnJ
+        elif system_name == "JR - ACCAS":
+            return cls.SYSTEM_ACCAS
         elif system_name == "JR >=6 + jockey":
             return cls.SYSTEM_6LTO
         elif system_name == "JR-ALLOUT":
@@ -115,7 +121,6 @@ def get_row_fill_color(pick):
 
 def get_bsp_row_fill_color(pick):
     """Return the row fill color for the given pick."""
-    print(pick.system)
     return "#cfe2f3" if pick.system == Pick.SYSTEM_6LTO else "#ffbfb8"
 
 
@@ -147,7 +152,6 @@ def get_lt6r_row_line_color(pick):
 
 def get_bsp_row_line_color(pick):
     """Return the row line color for the given lt6r pick."""
-    print(type(pick))
     index = bsp_picks.index(pick)
     if index == 0:
         return "#bbbbbb"
