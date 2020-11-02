@@ -11,7 +11,7 @@ class Pick:
         self.horse = pick_list[2]
         self.course = pick_list[3]
         self.finishing_position = pick_list[4]
-        self.ep = float(pick_list[12])
+        self.ep = float(pick_list[13])
         self.sp = float(pick_list[6]) + 1.0
         self.bsp = float(pick_list[7])
 
