@@ -23,7 +23,7 @@ picks = []
 
 
 def add_picks_from_csv(csv_filename):
-    with open(csv_filename) as input_csv:
+    with open(f"systems/{csv_filename}") as input_csv:
         picks_csv = csv.reader(input_csv)
         first_line = True
         for line in picks_csv:
@@ -37,7 +37,7 @@ add_picks_from_csv("TN2.csv")
 add_picks_from_csv("DTR.csv")
 add_picks_from_csv("MR3.csv")   # Not core
 add_picks_from_csv("LT6R.csv")
-add_picks_from_csv("JLT2.csv")  # Not core
+#add_picks_from_csv("JLT2.csv")  # Not core
 add_picks_from_csv("PnJ.csv")   # Not core
 #add_picks_from_csv("TJS.csv")
 add_picks_from_csv("accas.csv")
