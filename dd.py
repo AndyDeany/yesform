@@ -5,7 +5,10 @@ import statistics
 
 class Pick:
 
-    def __init__(self, pick_list):
+    PRICE_EP_BOG = "ep_bog"
+    PRICE_BSP = "bsp"
+
+    def __init__(self, pick_list, price):
         self.date = datetime.strptime(pick_list[0], "%d/%m/%Y")
         self.time = pick_list[1]
         self.horse = pick_list[2]
@@ -14,6 +17,7 @@ class Pick:
         self.ep = float(pick_list[13])
         self.sp = float(pick_list[6]) + 1.0
         self.bsp = float(pick_list[7])
+        self.price = price
 
     def __repr__(self):
         return f"{self.date} - {self.course} - {self.time} - {self.horse}"
@@ -22,7 +26,7 @@ class Pick:
 picks = []
 
 
-def add_picks_from_csv(csv_filename):
+def add_picks_from_csv(csv_filename, price=Pick.PRICE_EP_BOG):
     with open(f"systems/{csv_filename}") as input_csv:
         picks_csv = csv.reader(input_csv)
         first_line = True
@@ -30,21 +34,32 @@ def add_picks_from_csv(csv_filename):
             if first_line:
                 first_line = False
                 continue
-            picks.append(Pick(line))
+            picks.append(Pick(line, price=price))
 
 
+# EP Systems
 add_picks_from_csv("TN2.csv")
 add_picks_from_csv("DTR.csv")
 add_picks_from_csv("MR3.csv")   # Not core
 add_picks_from_csv("LT6R.csv")
-#add_picks_from_csv("JLT2.csv")  # Not core
+add_picks_from_csv("JLT2.csv")  # Not core
 add_picks_from_csv("PnJ.csv")   # Not core
 #add_picks_from_csv("TJS.csv")
 add_picks_from_csv("accas.csv")
 #add_picks_from_csv("DDTR.csv") # Kinda bad
 #add_picks_from_csv("DTR2.csv") # Kinda bad
-#add_picks_from_csv("6lto.csv") # BSP
 
+# BSP Systems
+#add_picks_from_csv("6lto.csv")
+add_picks_from_csv("pacef.csv", Pick.PRICE_BSP)
+add_picks_from_csv("topofpower.csv", Pick.PRICE_BSP)
+add_picks_from_csv("topspeedandjockey.csv", Pick.PRICE_BSP)
+add_picks_from_csv("NTFcheltenham.csv", Pick.PRICE_BSP)
+add_picks_from_csv("cheltenham-stiff.csv", Pick.PRICE_BSP)
+add_picks_from_csv("DTR-hurdles-only.csv", Pick.PRICE_BSP)
+add_picks_from_csv("UKtravellers.csv", Pick.PRICE_BSP)
+add_picks_from_csv("PnJ.csv", Pick.PRICE_BSP)
+add_picks_from_csv("EASED.csv", Pick.PRICE_BSP)
 
 
 picks.sort(key=lambda p: (p.date, p.time, p.horse))    # Sort picks by course then time
@@ -101,7 +116,12 @@ for pick in picks:
 
     for day_pick in day_picks:
         if day_pick.finishing_position == "1":
-            gains = max(day_pick.ep, day_pick.sp)
+            if day_pick.price == Pick.PRICE_EP_BOG:
+                gains = max(day_pick.ep, day_pick.sp)*0.95  # Account for R4/late picks with 0.95 * odds (estimate)
+            elif day_pick.price == Pick.PRICE_BSP:
+                gains = day_pick.bsp
+            else:
+                raise ValueError(f"Unknown pricing type: {day_pick.price}")
             profit += gains
             Run.update_profits(gains)
         if profit > max_profit:
