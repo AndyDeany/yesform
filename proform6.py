@@ -34,8 +34,6 @@ class Pick:
             self.systems.add(self.SYSTEM_MR3)
         elif system == "JR - LT6R":
             self.systems.add(self.SYSTEM_LT6R)
-        #elif system == "JR-JLT2":
-        #    self.systems.add(self.SYSTEM_JLT2)
         elif system == "jockey+pace":
             self.systems.add(self.SYSTEM_PnJ)
         elif system == "JR - ACCAS":
