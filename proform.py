@@ -7,42 +7,61 @@ jlt2_picks = []
 pnj_picks = []
 accas_picks = []
 bsp_picks = []
+bsp9_picks = []
 
 
 class Pick:
 
+    # EP BOG
     SYSTEM_TN2 = "TN2"
     SYSTEM_DTR = "DTR"
     SYSTEM_MR3 = "MR3"
     SYSTEM_LT6R = "LT6R"
     SYSTEM_JLT2 = "JLT2"
     SYSTEM_ACCAS = "ACCAS"
-    SYSTEM_PnJ = "PnJ"
+    SYSTEM_PnJ = "PnJ"  # Also a BSP system
+
+    # BSP
     SYSTEM_6LTO = "6LTO"
     SYSTEM_ALLOUT = "ALLOUT"
+
+    # BSP9 (with PnJ, above)
+    SYSTEM_PACE = "PACE"
+    SYSTEM_EASED = "EASED"
+    SYSTEM_TOP_OF_POWER = "TOP"
+    SYSTEM_TOP_SPEED_AND_JOCKEY = "SnJ"
+    SYSTEM_NTF_CHELTENHAM_1 = "NTF1"
+    SYSTEM_NTF_CHELTENHAM_2 = "NTF2"
+    SYSTEM_DTR_HURDLES_ONLY = "DTRH"
+    SYSTEM_UK_TRAVELLERS = "UKT"
+
+    SYSTEMS_BSP8 = (SYSTEM_PACE, SYSTEM_EASED, SYSTEM_TOP_OF_POWER, SYSTEM_TOP_SPEED_AND_JOCKEY,
+                    SYSTEM_NTF_CHELTENHAM_1, SYSTEM_NTF_CHELTENHAM_2, SYSTEM_DTR_HURDLES_ONLY, SYSTEM_UK_TRAVELLERS)
 
     @classmethod
     def standardised_system(cls, system_name):
         """Get the standardised name of the system with the given system_name."""
-        if system_name == "JR-TN2":
-            return cls.SYSTEM_TN2
-        elif system_name == "JR-DTR":
-            return cls.SYSTEM_DTR
-        elif system_name == "JR-MR3.2":
-            return cls.SYSTEM_MR3
-        elif system_name == "JR - LT6R":
-            return cls.SYSTEM_LT6R
-        elif system_name == "JR-JLT2":
-            return cls.SYSTEM_JLT2
-        elif system_name == "jockey+pace":
-            return cls.SYSTEM_PnJ
-        elif system_name == "JR - ACCAS":
-            return cls.SYSTEM_ACCAS
-        elif system_name == "JR >=6 + jockey":
-            return cls.SYSTEM_6LTO
-        elif system_name == "JR-ALLOUT":
-            return cls.SYSTEM_ALLOUT
-        else:
+        try:
+            return {
+                "JR-TN2": cls.SYSTEM_TN2,
+                "JR-DTR": cls.SYSTEM_DTR,
+                "JR-MR3.2": cls.SYSTEM_MR3,
+                "JR - LT6R": cls.SYSTEM_LT6R,
+                "JR-JLT2": cls.SYSTEM_JLT2,
+                "jockey+pace": cls.SYSTEM_PnJ,
+                "JR - ACCAS": cls.SYSTEM_ACCAS,
+                "JR >=6 + jockey": cls.SYSTEM_6LTO,
+                "JR-ALLOUT": cls.SYSTEM_ALLOUT,
+                "jr-pace1": cls.SYSTEM_PACE,
+                "JR-EASED": cls.SYSTEM_EASED,
+                "Top of Power": cls.SYSTEM_TOP_OF_POWER,
+                "Top Speed and Jockey": cls.SYSTEM_TOP_SPEED_AND_JOCKEY,
+                "NTF Cheltenham": cls.SYSTEM_NTF_CHELTENHAM_1,
+                "cheltsLTOstiff": cls.SYSTEM_NTF_CHELTENHAM_2,
+                "DTR Hurdles Only": cls.SYSTEM_DTR_HURDLES_ONLY,
+                "UK Travellers": cls.SYSTEM_UK_TRAVELLERS,
+            }[system_name]
+        except KeyError:
             raise ValueError(f"Unknown system: {system_name}")
 
     def __init__(self, pick_list):
@@ -79,10 +98,13 @@ with open("ferret.csv") as input_csv:
             jlt2_picks.append(pick)
         elif pick.system == Pick.SYSTEM_PnJ:
             pnj_picks.append(pick)
+            bsp9_picks.append(pick)
         elif pick.system == Pick.SYSTEM_ACCAS:
             accas_picks.append(pick)
         elif pick.system in (Pick.SYSTEM_6LTO, Pick.SYSTEM_ALLOUT):
             bsp_picks.append(pick)
+        elif pick.system in Pick.SYSTEMS_BSP8:
+            bsp9_picks.append(pick)
         else:
             picks.append(pick)
 
