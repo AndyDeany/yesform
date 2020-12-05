@@ -20,6 +20,7 @@ class Pick:
     SYSTEM_JLT2 = "JLT2"
     SYSTEM_ACCAS = "ACCAS"
     SYSTEM_PnJ = "PnJ"  # Also a BSP system
+    SYSTEM_TJS = "TJS"
 
     # BSP
     SYSTEM_6LTO = "6LTO"
@@ -34,6 +35,8 @@ class Pick:
     SYSTEM_NTF_CHELTENHAM_2 = "NTF2"
     SYSTEM_DTR_HURDLES_ONLY = "DTRH"
     SYSTEM_UK_TRAVELLERS = "UKT"
+    SYSTEM_SPTT = "SPTT"
+    SYSTEM_SPTJ = "SPTJ"
 
     SYSTEMS_BSP8 = (SYSTEM_PACE, SYSTEM_EASED, SYSTEM_TOP_OF_POWER, SYSTEM_TOP_SPEED_AND_JOCKEY,
                     SYSTEM_NTF_CHELTENHAM_1, SYSTEM_NTF_CHELTENHAM_2, SYSTEM_DTR_HURDLES_ONLY, SYSTEM_UK_TRAVELLERS)
@@ -50,6 +53,7 @@ class Pick:
                 "JR-JLT2": cls.SYSTEM_JLT2,
                 "jockey+pace": cls.SYSTEM_PnJ,
                 "JR - ACCAS": cls.SYSTEM_ACCAS,
+                "tjs": cls.SYSTEM_TJS,
                 "JR >=6 + jockey": cls.SYSTEM_6LTO,
                 "JR-ALLOUT": cls.SYSTEM_ALLOUT,
                 "jr-pace1": cls.SYSTEM_PACE,
@@ -60,6 +64,8 @@ class Pick:
                 "cheltsLTOstiff": cls.SYSTEM_NTF_CHELTENHAM_2,
                 "DTR Hurdles Only": cls.SYSTEM_DTR_HURDLES_ONLY,
                 "UK Travellers": cls.SYSTEM_UK_TRAVELLERS,
+                "SPTT": cls.SYSTEM_SPTT,
+                "SPTJ": cls.SYSTEM_SPTJ,
             }[system_name]
         except KeyError:
             raise ValueError(f"Unknown system: {system_name}")

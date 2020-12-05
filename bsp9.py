@@ -22,6 +22,8 @@ class Pick:
     SYSTEM_NTF_CHELTENHAM_2 = "NTF2"
     SYSTEM_DTR_HURDLES_ONLY = "DTRH"
     SYSTEM_UK_TRAVELLERS = "UKT"
+    SYSTEM_SPTT = "SPTT"
+    SYSTEM_SPTJ = "SPTJ"
 
     def __init__(self, column_headers, pick_list):
 
@@ -35,9 +37,7 @@ class Pick:
 
         self.systems = set()
         system = pick_list[data_columns["system"]]
-        if system == "jockey+pace":
-            self.systems.add(self.SYSTEM_PnJ)
-        elif system == "jr-pace1":
+        if system == "jr-pace1":
             self.systems.add(self.SYSTEM_PACE)
         elif system == "JR-EASED":
             self.systems.add(self.SYSTEM_EASED)
@@ -51,8 +51,10 @@ class Pick:
             self.systems.add(self.SYSTEM_NTF_CHELTENHAM_2)
         elif system == "DTR Hurdles Only":
             self.systems.add(self.SYSTEM_DTR_HURDLES_ONLY)
-        elif system == "UK Travellers":
-            self.systems.add(self.SYSTEM_UK_TRAVELLERS)
+        elif system == "SPTT":
+            self.systems.add(self.SYSTEM_SPTT)
+        elif system == "SPTJ":
+            self.systems.add(self.SYSTEM_SPTJ)
         else:
             raise ValueError(f"Unknown system: {system}")
 
@@ -88,7 +90,7 @@ with open("ferret.csv") as input_csv:
         try:
             picks.append(Pick(first_line, line))
         except ValueError:
-            continue    # Ignoring picks that aren't from our main EP systems.
+            continue    # Ignoring picks that aren't from our BSP systems.
 
 
 picks.sort(key=lambda p: (p.course, p.time))    # Sort picks by course then time

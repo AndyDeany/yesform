@@ -11,7 +11,7 @@ class Pick:
     SYSTEM_MR3 = "MR3"
     SYSTEM_LT6R = "LT6R"
     SYSTEM_JLT2 = "JLT2"
-    SYSTEM_PnJ = "PnJ"
+    SYSTEM_TJS = "TJS"
     SYSTEM_ACCAS = "ACCAS"
 
     def __init__(self, column_headers, pick_list):
@@ -34,10 +34,10 @@ class Pick:
             self.systems.add(self.SYSTEM_MR3)
         elif system == "JR - LT6R":
             self.systems.add(self.SYSTEM_LT6R)
-        elif system == "jockey+pace":
-            self.systems.add(self.SYSTEM_PnJ)
         elif system == "JR - ACCAS":
             self.systems.add(self.SYSTEM_ACCAS)
+        elif system == "tjs":
+            self.systems.add(self.SYSTEM_TJS)
         else:
             raise ValueError(f"Unknown system: {system}")
 
