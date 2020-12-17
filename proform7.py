@@ -4,6 +4,10 @@ import plotly.graph_objects as go
 picks = []
 
 
+class UnwantedSystemError(ValueError):
+    """Exception for raising when the system of the given pick is not desired."""
+
+
 class Pick:
 
     SYSTEM_TN2 = "TN2"
@@ -41,7 +45,7 @@ class Pick:
         elif system == "tjs":
             self.systems.add(self.SYSTEM_TJS)
         else:
-            raise ValueError(f"Unknown system: {system}")
+            raise UnwantedSystemError(f"Unknown system: {system}")
 
         self.horse = pick_list[data_columns["horse"]]
         self.course = pick_list[data_columns["course"]]
@@ -74,7 +78,7 @@ with open("ferret.csv") as input_csv:
             continue    # Skip first line - column headers, not a pick
         try:
             picks.append(Pick(first_line, line))
-        except ValueError:
+        except UnwantedSystemError:
             continue    # Ignoring picks that aren't from our main EP systems.
 
 
