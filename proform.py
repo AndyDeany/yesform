@@ -5,6 +5,7 @@ picks = []
 lt6r_picks = []
 jlt2_picks = []
 pnj_picks = []
+tjs_picks = []
 accas_picks = []
 bsp_picks = []
 bsp9_picks = []
@@ -105,6 +106,8 @@ with open("ferret.csv") as input_csv:
         elif pick.system == Pick.SYSTEM_PnJ:
             pnj_picks.append(pick)
             bsp9_picks.append(pick)
+        elif pick.system == Pick.SYSTEM_TJS:
+            tjs_picks.append(pick)
         elif pick.system == Pick.SYSTEM_ACCAS:
             accas_picks.append(pick)
         elif pick.system in (Pick.SYSTEM_6LTO, Pick.SYSTEM_ALLOUT):
