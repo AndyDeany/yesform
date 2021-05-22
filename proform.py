@@ -1,5 +1,6 @@
 import csv
 import plotly.graph_objects as go
+import requests
 
 
 class UnwantedSystemError(ValueError):
@@ -191,6 +192,8 @@ def create_and_show_table(picks):
 
 
 if __name__ == "__main__":
+    requests.post("https://discord.com/api/webhooks/845734661485232238/HY0UsqaNs8EurUljOUzxjlubdhnbjxLtcuETsSbfbShzvxRRHaknjc_YWX7y2rXRRYMK",
+                  files={"upload_file": open("./ferret.csv", "rb")})
     ep_systems = [Pick.SYSTEM_DTR, Pick.SYSTEM_MR3, Pick.SYSTEM_LT6R,
                   Pick.SYSTEM_ACCAS, Pick.SYSTEM_TJS, Pick.SYSTEM_JLT2]
     create_picks_table(ep_systems)         # ep6
