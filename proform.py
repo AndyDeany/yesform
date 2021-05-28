@@ -12,6 +12,7 @@ SYSTEMS_WEBHOOK_URLS = {
     "ep3": "https://discord.com/api/webhooks/846180375821549568/o08S9GMjKw8IzriM2kA8T2D9pCdI0ImLkSnJGcPmsoSGZ2Gj3VZjtAg-9k7gfTx0dgqM",      # noqa
     "bsp9": "https://discord.com/api/webhooks/846180405132263454/yJi8Ru9qNYmFTrUFFTh7TJVjOXP3QS3qNu6VRcqKve4_SUGYpAu25IKfkuftmPKY8tmL",     # noqa
 }
+HORSE_NAMES_WEBHOOK_URL = "https://discord.com/api/webhooks/843804572791341066/ENdGpCbLQU-wg-wUv8pifgmMOw5JFbaKYyG8R9ECN7P-MKquchROZT7jCV662Bspb02H"    # noqa
 
 
 def upload_file(webhook_url, file_path):
@@ -19,7 +20,15 @@ def upload_file(webhook_url, file_path):
     requests.post(webhook_url, files={"upload_file": open(file_path, "rb")})
 
 
-def create_picks_table(systems, name):
+def send_message(webhook_url, message):
+    """Send the given message to the given webhook_url."""
+    response = requests.post(webhook_url, json={"content": message})
+    if response.status_code == 429:     # If rate limited
+        send_message(webhook_url, message)  # Try again
+
+
+def get_picks(systems):
+    """Get the picks from the CSV from the given systems."""
     picks = []
 
     with open("ferret.csv") as input_csv:
@@ -47,7 +56,25 @@ def create_picks_table(systems, name):
         else:
             picks.append(single_pick)
 
+    return picks
+
+
+def create_and_upload_table(picks, name):
+    """Create and upload a PNG with the given name containing a table showing the given picks."""
     upload_file(SYSTEMS_WEBHOOK_URLS[name], create_image(picks, name))
+
+
+def create_picks_table(systems, name):
+    """Create and upload a picks table created from the given system with the given name."""
+    picks = get_picks(systems)
+    create_and_upload_table(picks, name)
+
+
+def upload_horse_names(picks):
+    """Upload the horse names from the given picks to the #horse-names channel."""
+    message = "\n".join(pick.horse for pick in picks)
+    message += "\nexit"
+    send_message(HORSE_NAMES_WEBHOOK_URL, message)
 
 
 if __name__ == "__main__":
@@ -55,6 +82,7 @@ if __name__ == "__main__":
     ep_systems = [Pick.SYSTEM_DTR, Pick.SYSTEM_MR3, Pick.SYSTEM_LT6R,
                   Pick.SYSTEM_ACCAS, Pick.SYSTEM_TJS, Pick.SYSTEM_JLT2]
     create_picks_table(ep_systems, "ep6")
+    upload_horse_names(get_picks(ep_systems))
     ep_systems.remove(Pick.SYSTEM_JLT2)
     create_picks_table(ep_systems, "ep5")
     ep_systems.remove(Pick.SYSTEM_ACCAS)
