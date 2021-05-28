@@ -13,8 +13,6 @@ SPLIT_LINE_COLOR = "#8c5eff"
 BUFFER = 2
 FONT_FILE = "arial.ttf"
 
-COLUMN_HEADERS = ("Sys", "Course", "Time", "Horse", "x")
-
 
 def create_image(picks, name, font_size=15):
     """Create an image showing the given picks in readable format."""
@@ -29,8 +27,10 @@ def create_image(picks, name, font_size=15):
         [f"x{pick.quantity}" if pick.quantity > 1 else "" for pick in picks],
     ]
 
+    column_headers = ("Sys", "Course", "Time", f"Horse ({len(picks)})", "x")
+
     for index, column in enumerate(columns):
-        column.insert(0, COLUMN_HEADERS[index])
+        column.insert(0, column_headers[index])
 
     column_widths = [max((font.getlength(item) for item in column)) + 3*BUFFER for column in columns]
 
